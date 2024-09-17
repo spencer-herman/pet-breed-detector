@@ -3,4 +3,4 @@ Pillow
 inference-sdk==0.9.17
 gunicorn
 requests
-
+opencv-python-headless
