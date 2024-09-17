@@ -1,7 +1,10 @@
-Flask==2.3.0           # Web framework
-gunicorn==20.1.0       # WSGI HTTP Server to run Flask on Heroku
-tensorflow==2.13.0     # For model inference (replace with correct version)
-numpy==1.25.0          # For numerical computations
-opencv-python==4.8.0   # For image processing
-Pillow==9.3.0          # For handling image file formats
-scikit-learn==1.2.0    # For model and data handling
+Flask==2.3.2
+Pillow==9.3.0
+inference-sdk==0.9.17
+gunicorn==20.1.0
+requests==2.31.0
+
+# Specific versions might be needed based on compatibility
+# For example, specify PyTorch and torchvision
+torch==2.0.1
+torchvision==0.15.2
