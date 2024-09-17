@@ -6,10 +6,16 @@ from inference_sdk import InferenceHTTPClient
 
 app = Flask(__name__)
 
+#Get the API key from the environment variable
+API_KEY = os.getenv("ROBOFLOW_API_KEY")
+
+if not API_KEY:
+    raise ValueError("Please set the ROBOFLOW_API_KEY environment variable")
+
 # initialize the client
 CLIENT = InferenceHTTPClient(
     api_url="https://detect.roboflow.com",
-    api_key="EHXq8JvkOGPTQGcCIF75"
+    api_key=API_KEY
 )
 
 @app.route('/')
