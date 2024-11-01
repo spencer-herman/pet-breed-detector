@@ -4,3 +4,9 @@ inference-sdk==0.9.17
 gunicorn
 requests
 opencv-python-headless
+flask-sqlalchemy 
+flask-login 
+flask-bcrypt 
+flask-wtf
+python-dotenv
+email-validator

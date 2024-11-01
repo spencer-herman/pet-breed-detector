@@ -7,10 +7,41 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <h1>Upload an Image of Your Pet!</h1>
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*" required>
-        <input type="submit" value="Upload">
-    </form>
+    <div class="container">
+        <h1>Upload an Image of Your Pet</h1>
+        
+        {% if error_message %}
+        <div class="error-message">
+            <strong>{{ error_message }}</strong>
+        </div>
+        {% endif %}
+
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+            <input type="file" name="image" accept="image/*" required>
+            <input type="submit" value="Upload" class="upload-button">
+        </form>
+    </div>
+
+    <!-- Sidebar that will slide from the right -->
+    <div class="sidebar">
+        <ul>
+            
+            <li><a href="/saved_pictures">Saved Pictures</a></li>
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/settings">Settings</a></li>
+        </ul>
+
+        <ul>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+    <button class="sidebar-toggle">☰ Menu</button>
+
+    <script>
+        document.querySelector('.sidebar-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('show-sidebar');
+            document.querySelector('.container').classList.toggle('shift-container');
+        });
+    </script>
 </body>
 </html>

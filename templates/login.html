@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loginstyles.css') }}">
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Login</h2>
+
+    <!-- Display error messages if any -->
+    {% if message %}
+    <div class="alert">{{ message }}</div>
+    {% endif %}
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <!-- Email input -->
+        <div class="input-container">
+            {{ form.email.label }}
+            {{ form.email }}
+        </div>
+
+        <!-- Password input -->
+        <div class="input-container">
+            {{ form.password.label }}
+            {{ form.password }}
+        </div>
+
+        <!-- Submit button -->
+        {{ form.submit(class="btn btn-success") }}
+    </form>
+
+    <div class="signup-link">
+        <p>Don't have an account? <a href="{{ url_for('register') }}">Sign up</a></p>
+    </div>
+</div>
+
+</body>
+</html>
