@@ -12,7 +12,6 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
-
 # Initialize the Flask app
 app = Flask(__name__)
 
@@ -64,9 +63,10 @@ class User(db.Model, UserMixin):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Create the database
+# Create the database only if it doesn't exist
 with app.app_context():
-    db.create_all()
+    if not os.path.exists('sqlite:///site.db'):
+        db.create_all()
 
 # Create the forms with Flask-WTF
 class RegistrationForm(FlaskForm):
@@ -87,7 +87,6 @@ def index():
     if current_user.is_authenticated:
         return redirect(url_for('upload'))
     return redirect(url_for('login'))
-
 
 # Route for user registration
 @app.route('/register', methods=['GET', 'POST'])
@@ -150,7 +149,12 @@ def upload():
 
         # Draw the bounding box and labels on the image
         draw = ImageDraw.Draw(image)
+
+        # Check if font exists, otherwise load default font
+        font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
         font = ImageFont.load_default()
+        if os.path.exists(font_path):
+            font = ImageFont.truetype(font_path, 48)
 
         predictions = result['predictions']
 
@@ -166,11 +170,6 @@ def upload():
             confidence = pred['confidence']
             box = [(x - width / 2, y - height / 2), (x + width / 2, y + height / 2)]
             draw.rectangle(box, outline="red", width=3)
-
-            # Load a larger font
-            font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
-            font_size = 48
-            font = ImageFont.truetype(font_path, font_size)
 
             # Format text for the label and confidence
             text = f"{label}: {confidence:.2f}"
