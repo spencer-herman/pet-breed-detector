@@ -11,6 +11,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
+from flask_migrate import Migrate  # Added for migrations
 
 # Initialize the Flask app
 app = Flask(__name__)
@@ -18,7 +19,7 @@ app = Flask(__name__)
 # Load the .env file
 load_dotenv()
 
-# secret key and the upload folder for saving user images
+# Secret key and the upload folder for saving user images
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
@@ -29,13 +30,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
-# IF THERE IS NO SECRET KEY
+# If there is no SECRET_KEY, raise an error
 if not app.config['SECRET_KEY']:
     raise ValueError("Please set the SECRET_KEY environment variable")
 
 # Get the API key from the environment variable
 API_KEY = os.getenv("ROBOFLOW_API_KEY")
-
 if not API_KEY:
     raise ValueError("Please set the ROBOFLOW_API_KEY environment variable")
 
@@ -47,6 +47,7 @@ CLIENT = InferenceHTTPClient(
 
 # Initialize extensions
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)  # Initialize Flask-Migrate
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -63,10 +64,7 @@ class User(db.Model, UserMixin):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Create the database only if it doesn't exist
-with app.app_context():
-    if not os.path.exists('sqlite:///site.db'):
-        db.create_all()
+
 
 # Create the forms with Flask-WTF
 class RegistrationForm(FlaskForm):
