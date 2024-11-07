@@ -23,8 +23,8 @@ load_dotenv()
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
-# Database URI for SQLite
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+# Database URL for the Heroku postgres database
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 
 # Ensure the upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
