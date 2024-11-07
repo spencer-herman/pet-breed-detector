@@ -23,12 +23,10 @@ load_dotenv()
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
-# Database URL for the Heroku postgres database
-# Modify DATABASE_URL for compatibility with SQLAlchemy
-database_url = os.getenv('DATABASE_URL')
-if database_url and database_url.startswith("postgres://"):
+# Database URL for the Heroku postgres database or local SQLite database
+database_url = os.getenv('DATABASE_URL', 'sqlite:///site.db')
+if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
-
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 
 # Ensure the upload folder exists
@@ -68,8 +66,6 @@ class User(db.Model, UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
-
 
 # Create the forms with Flask-WTF
 class RegistrationForm(FlaskForm):
@@ -139,29 +135,19 @@ def upload():
             return redirect(request.url)
 
         file = request.files['image']
-
-        # Save the uploaded image to a temporary file
         temp_image_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename))
         file.save(temp_image_path)
 
-        # Perform inference using the saved image path
         result = CLIENT.infer(temp_image_path, model_id='dog_breed_detector/1')
-
-        # Open the image with PIL for further processing
         image = Image.open(temp_image_path)
-
-        # Draw the bounding box and labels on the image
         draw = ImageDraw.Draw(image)
-
-        # Check if font exists, otherwise load default font
+        
         font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
         font = ImageFont.load_default()
         if os.path.exists(font_path):
             font = ImageFont.truetype(font_path, 48)
 
         predictions = result['predictions']
-
-        # Check if there are any predictions
         if not predictions:
             os.remove(temp_image_path)
             flash('No detections found.', 'danger')
@@ -173,25 +159,16 @@ def upload():
             confidence = pred['confidence']
             box = [(x - width / 2, y - height / 2), (x + width / 2, y + height / 2)]
             draw.rectangle(box, outline="red", width=3)
-
-            # Format text for the label and confidence
             text = f"{label}: {confidence:.2f}"
             text_position = (x - width / 2, y - height / 2 - 60)
-            if text_position[1] < 0:  # if text is going off the top edge
+            if text_position[1] < 0:
                 text_position = (x - width / 2, y + height / 2 + 10)
-
-            # Draw text for the detection
             draw.text(text_position, text, fill="red", font=font)
 
-        # Save the result image to bytes
         result_img_io = io.BytesIO()
         image.save(result_img_io, 'JPEG')
         result_img_io.seek(0)
-
-        # Remove the temporary image file after use
         os.remove(temp_image_path)
-
-        # Return the image with the predictions as a response
         return send_file(result_img_io, mimetype='image/jpeg')
 
     return render_template('upload_form.html')
