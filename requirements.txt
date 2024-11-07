@@ -11,3 +11,4 @@ flask-wtf
 python-dotenv
 email-validator
 Flask-Migrate
+psycopg2-binary
