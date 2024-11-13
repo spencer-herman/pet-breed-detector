@@ -145,7 +145,7 @@ def upload():
         font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
         font = ImageFont.load_default()
         if os.path.exists(font_path):
-            font = ImageFont.truetype(font_path, 48)
+            font = ImageFont.truetype(font_path, 72)
 
         predictions = result['predictions']
         if not predictions:
@@ -160,7 +160,7 @@ def upload():
             box = [(x - width / 2, y - height / 2), (x + width / 2, y + height / 2)]
             draw.rectangle(box, outline="red", width=3)
             text = f"{label}: {confidence:.2f}"
-            text_position = (x - width / 2, y - height / 2 - 60)
+            text_position = (x - width / 2, y - height / 2 - 120)
             if text_position[1] < 0:
                 text_position = (x - width / 2, y + height / 2 + 10)
             draw.text(text_position, text, fill="red", font=font)
