@@ -5,7 +5,7 @@ import io
 from inference_sdk import InferenceHTTPClient
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQALlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
